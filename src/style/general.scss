@@ -1,0 +1,16 @@
+@import '~bootstrap/scss/bootstrap';
+
+@import "~@fontsource/lato/index.css";
+@import "~@fontsource/lato/700.css";
+
+@import './variables';
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+ body{
+    font-family: $main-font;
+    font-weight: 400;
+    background-color: $bg-color;
+}
