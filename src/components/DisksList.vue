@@ -1,14 +1,17 @@
 <template>
   <section class="disks container">
       <div class="content" v-if="!loading" >
+        <div class="col-12">
+          <SelectGenre @performSelect="selectGener" :gens="uniqueGenr"/>
+        </div>
           <div 
-            class="card-disk"
-            v-for="disk,index in disks"
+            class="card-disk" 
+            v-for="disk,index in filteredDisks"
             :key="index"    
             >
-              <disk
+            <Disk
                 :item="disk"
-               /> 
+            /> 
           </div>  
       </div>
       <Loader v-else/> 
@@ -18,26 +21,54 @@
 <script>
 import Disk from './Disk';
 import Loader from './Loader';
+import SelectGenre from './SelectGenre';
 import axios from 'axios';
 export default {
     name:"DisksList",
     components:{
         Disk,
-        Loader
+        Loader,
+        SelectGenre
     },
     data: function() {
         return {
             apiUrl: 'https://flynn.boolean.careers/exercises/api/array/music',
             disks: [],
-            loading: true
+            uniqueGenr:[],
+            loading: true,
+            selectField:''
         }
     },
-     created: function() {
+    computed: {
+        filteredDisks: function() {
+            // console.log("Filtered disks");
+            if(this.selectField == "All" || this.selectField == ""){
+                return this.disks;
+            }
+            const newArray = this.disks.filter(
+                (element) => {
+                    return element.genre == this.selectField;
+                } 
+            );
+            return newArray;      
+        }
+    },
+    methods: {
+        selectGener: function(text){
+            this.selectField = text;
+        }
+    },
+    created: function() {
         axios
             .get(this.apiUrl)
             .then(
                (response) => {
                    this.disks = response.data.response;
+                   const genres =[];
+                   this.disks.forEach(element => {
+                       genres.push(element.genre);
+                   });
+                   this.uniqueGenr = [...new Set(genres)];
                    this.loading = false;   
                }
             )
