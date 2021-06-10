@@ -2,7 +2,10 @@
   <section class="disks container">
       <div class="content" v-if="!loading" >
         <div class="col-12">
-          <SelectGenre @performSelect="selectGener" :gens="uniqueGenr"/>
+          <SelectGenre @performSelectGenre="selectGener" :gens="uniqueGenr"/>
+        </div>
+        <div class="col-12">
+          <SelectArtist @performSelectArtist="selectArtist" :arts="uniqueArts"/>
         </div>
           <div 
             class="card-disk" 
@@ -22,32 +25,32 @@
 import Disk from './Disk';
 import Loader from './Loader';
 import SelectGenre from './SelectGenre';
+import SelectArtist from './SelectArtist';
 import axios from 'axios';
 export default {
     name:"DisksList",
     components:{
         Disk,
         Loader,
-        SelectGenre
+        SelectGenre,
+        SelectArtist
     },
     data: function() {
         return {
             apiUrl: 'https://flynn.boolean.careers/exercises/api/array/music',
             disks: [],
             uniqueGenr:[],
+            uniqueArts:[],
             loading: true,
-            selectField:''
+            selectFieldGenr:'',
+            selectFieldArtist:''
         }
     },
     computed: {
         filteredDisks: function() {
-            // console.log("Filtered disks");
-            if(this.selectField == "All" || this.selectField == ""){
-                return this.disks;
-            }
             const newArray = this.disks.filter(
                 (element) => {
-                    return element.genre == this.selectField;
+                    return ((element.genre == this.selectFieldGenr || this.selectFieldGenr == "All" || this.selectFieldGenr == "" )  && (element.author == this.selectFieldArtist ||  this.selectFieldArtist == "" || this.selectFieldArtist == "All"));
                 } 
             );
             return newArray;      
@@ -55,7 +58,10 @@ export default {
     },
     methods: {
         selectGener: function(text){
-            this.selectField = text;
+            this.selectFieldGenr = text;
+        },
+        selectArtist: function(text){
+            this.selectFieldArtist = text;
         }
     },
     created: function() {
@@ -65,10 +71,13 @@ export default {
                (response) => {
                    this.disks = response.data.response;
                    const genres =[];
+                   const artists =[];
                    this.disks.forEach(element => {
                        genres.push(element.genre);
+                       artists.push(element.author);
                    });
                    this.uniqueGenr = [...new Set(genres)];
+                   this.uniqueArts = [...new Set(artists)];
                    this.loading = false;   
                }
             )

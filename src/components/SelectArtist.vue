@@ -1,15 +1,15 @@
 <template>
-<div>
+  <div>
     <select 
     v-model="selected"
-    @click="$emit('performSelectGenre', selected)"
+    @click="$emit('performSelectArtist', selected)"
     >
-      <option disabled value="">Seleziona un genere</option>
+      <option disabled value="">Seleziona un artista</option>
       <option>All</option>
-      <option v-for="gen,index in gens" 
-      :value="gen"
+      <option v-for="art,index in arts" 
+      :value="art"
       :key="index">
-            {{ gen }}
+            {{ art }}
       </option> 
    </select>
    
@@ -19,8 +19,8 @@
 
 <script>
 export default {
-    name:"SelectGenre",
-    props: [ "gens" ],
+name:"SelectArtist",
+    props: [ "arts" ],
     data: function(){
         return {
             selected:''
@@ -29,11 +29,12 @@ export default {
 }
 </script>
 
+
 <style lang="scss" scoped>
     div{
         position: absolute;
         top:20px;
-        right:10px;
+        right:200px;
        select{
         width:180px;
         padding:5px;
@@ -41,4 +42,5 @@ export default {
     }
     }
     
+
 </style>
